@@ -15,7 +15,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/jay335/form-app.git', credentialsId: 'github-pat'
+                git branch: 'main', url: 'https://github.com/jay335/form-app.git', credentialsId: 'github-pat-for-gitty'
             }
         }
 

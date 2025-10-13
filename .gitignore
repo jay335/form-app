@@ -1,0 +1,29 @@
+# --- Sensitive and local files
+.env
+.aws/
+terraform/terraform.tfvars
+
+# --- Python-specific files
+__pycache__/
+*.pyc
+venv/
+env/
+*.egg-info/
+
+# --- Node.js specific files
+node_modules/
+package-lock.json
+
+# --- Terraform specific files
+*.tfstate
+*.tfstate.backup
+.terraform.lock.hcl
+.terraform/
+*.tfplan
+override.tf
+
+# --- Docker and CI/CD specific files
+.dockerignore
+*.log
+jenkins_home/
+

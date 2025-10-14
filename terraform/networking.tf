@@ -41,13 +41,13 @@ resource "aws_subnet" "private" {
 
 resource "aws_internet_gateway" "app_igw" {
 	vpc_id = aws_vpc.app_vpc.id
-       tags = {
+       twsiags = {
          Name = "form-app-igw"
    }
 }
 
 #---Elastic Ip for Nat Gateway
-resource "aws_eip" "nat_gateway_eip"
+resource "aws_eip" "nat_gateway_eip" {
    vpc = true
    depends_on = [aws_internet_gateway.app.igw]
    tags = {

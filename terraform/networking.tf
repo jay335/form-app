@@ -137,6 +137,13 @@ resource "aws_security_group" "frontend_sg" {
     protocol        = "tcp"
     security_groups = [aws_security_group.alb_sg.id]
   }
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
 }
 
 # --- Security Group for Backend Fargate Task ---
@@ -150,5 +157,12 @@ resource "aws_security_group" "backend_sg" {
     protocol        = "tcp"
     security_groups = [aws_security_group.frontend_sg.id]
   }
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
 }
 

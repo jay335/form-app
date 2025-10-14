@@ -112,6 +112,11 @@ resource "aws_ecs_service" "frontend_service" {
     subnets         = [aws_subnet.private[0].id]
   }
 
+  depends_on = [
+    # Assuming your listener is defined elsewhere
+    aws_lb_listener.frontend_listener
+  ]
+
   load_balancer {
     target_group_arn = aws_lb_target_group.frontend_tg.arn
     container_name   = "frontend-container"

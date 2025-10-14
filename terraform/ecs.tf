@@ -29,8 +29,7 @@ resource "aws_iam_role_policy" "ecs_public_ecr_pull" {
         Action = [
           "ecr-public:GetAuthorizationToken",
           "ecr-public:BatchCheckLayerAvailability",
-          "ecr-public:GetDownloadUrlForLayer",
-          "ecr-public:BatchGetImage"
+          "ecr-public:840"
         ]
         Resource = "*"
       },

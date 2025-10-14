@@ -16,6 +16,37 @@ resource "aws_iam_role" "ecs_task_execution_role" {
     ]
   })
 }
+# --- Policy to allow pulling from Public ECR
+resource "aws_iam_role_policy" "ecs_public_ecr_pull" {
+  name = "ecs-public-ecr-pull-policy"
+  role = aws_iam_role.ecs_task_execution_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "ecr-public:GetAuthorizationToken",
+          "ecr-public:BatchCheckLayerAvailability",
+          "ecr-public:GetDownloadUrlForLayer",
+          "ecr-public:BatchGetImage"
+        ]
+        Resource = "*"
+      },
+      {
+        Effect = "Allow",
+        Action = "sts:GetServiceBearerToken",
+        Resource = "*",
+        Condition = {
+          StringEquals = {
+            "sts:AWSServiceName" = "ecr-public.amazonaws.com"
+          }
+        }
+      }
+    ]
+  })
+}
 
 # Attach the policy that allows ECS tasks to pull from ECR and write logs
 resource "aws_iam_role_policy_attachment" "ecs_task_execution_policy" {

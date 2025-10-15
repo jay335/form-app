@@ -218,4 +218,19 @@ resource "aws_lb_listener_rule" "backend_rule" {
       values = ["/api/*"]  # Any path starting with /api goes to backend
     }
   }
-}
+# --- ALB Listener Rules for Path-Based Routing
+resource "aws_lb_listener_rule" "backend_rule" {
+  listener_arn = aws_lb_listener.frontend_listener.arn
+  priority     = 10
+
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.backend_tg.arn
+  }
+
+  condition {
+    path_pattern {
+      values = ["/api/*"]  # Any path starting with /api goes to backend
+    }
+  }
+}}

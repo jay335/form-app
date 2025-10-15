@@ -166,6 +166,15 @@ resource "aws_ecs_service" "backend_service" {
     security_groups = [aws_security_group.backend_sg.id]
     subnets         = [aws_subnet.private[0].id]
   }
+  load_balancer {
+    target_group_arn = aws_lb_target_group.backend_tg.arn
+    container_name   = "backend-container"
+    container_port   = 5000
+  }
+
+  depends_on = [
+    aws_lb_listener.backend_listener
+  ]
 }
 
 # --- Application Load Balancer (ALB) and Target Groups
@@ -176,6 +185,15 @@ resource "aws_lb" "frontend_alb" {
   subnets            = [aws_subnet.public[0].id, aws_subnet.public[1].id]
   security_groups    = [aws_security_group.alb_sg.id]
 }
+# --- Backend Application Load Balancer (ALB)
+resource "aws_lb" "backend_alb" {
+  name               = "form-app-backend-alb"
+  internal           = false
+  load_balancer_type = "application"
+  subnets            = [aws_subnet.public[0].id, aws_subnet.public[1].id]
+  security_groups    = [aws_security_group.alb_sg.id]
+}
+
 
 resource "aws_lb_target_group" "frontend_tg" {
   name        = "form-app-frontend-tg"
@@ -202,20 +220,13 @@ resource "aws_lb_listener" "frontend_listener" {
     target_group_arn = aws_lb_target_group.frontend_tg.arn
   }
 }
+resource "aws_lb_listener" "backend_listener" {
+  load_balancer_arn = aws_lb.backend_alb.arn
+  port              = "5000"
+  protocol          = "HTTP"
 
-# --- ALB Listener Rules for Path-Based Routing
-resource "aws_lb_listener_rule" "backend_rule" {
-  listener_arn = aws_lb_listener.frontend_listener.arn
-  priority     = 10
-
-  action {
+  default_action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.backend_tg.arn
-  }
-
-  condition {
-    path_pattern {
-      values = ["/api/*"]  # Any path starting with /api goes to backend
-    }
   }
 }

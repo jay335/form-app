@@ -166,3 +166,13 @@ resource "aws_security_group" "backend_sg" {
 
 }
 
+# Allow ALB to access backend container port (5000)
+resource "aws_security_group_rule" "backend_inbound_from_alb" {
+  type                     = "ingress"
+  from_port                = 5000
+  to_port                  = 5000
+  protocol                 = "tcp"
+  security_group_id        = aws_security_group.backend_sg.id
+  source_security_group_id = aws_security_group.alb_sg.id
+}
+

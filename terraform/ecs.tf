@@ -28,8 +28,7 @@ resource "aws_iam_role_policy" "ecs_public_ecr_pull" {
         Effect = "Allow"
         Action = [
           "ecr-public:GetAuthorizationToken",
-          "ecr-public:BatchCheckLayerAvailability",
-          "ecr-public:840"
+          "ecr-public:BatchCheckLayerAvailability"
         ]
         Resource = "*"
       },
@@ -185,6 +184,7 @@ resource "aws_lb" "frontend_alb" {
   subnets            = [aws_subnet.public[0].id, aws_subnet.public[1].id]
   security_groups    = [aws_security_group.alb_sg.id]
 }
+
 # --- Backend Application Load Balancer (ALB)
 resource "aws_lb" "backend_alb" {
   name               = "form-app-backend-alb"
@@ -202,6 +202,7 @@ resource "aws_lb_target_group" "frontend_tg" {
   vpc_id      = aws_vpc.app_vpc.id
   target_type = "ip"
 }
+
 # --- Backend Target Group
 resource "aws_lb_target_group" "backend_tg" {
   name        = "form-app-backend-tg"
@@ -209,7 +210,19 @@ resource "aws_lb_target_group" "backend_tg" {
   protocol    = "HTTP"
   vpc_id      = aws_vpc.app_vpc.id
   target_type = "ip"
+  health_check {
+    path                = "/"            # 👈 make sure your Flask responds here
+    port                = "5000"
+    protocol            = "HTTP"
+    matcher             = "200"
+    interval            = 30
+    timeout             = 5
+    healthy_threshold   = 2
+    unhealthy_threshold = 2
+  }
+
 }
+
 resource "aws_lb_listener" "frontend_listener" {
   load_balancer_arn = aws_lb.frontend_alb.arn
   port              = "80"
@@ -220,9 +233,10 @@ resource "aws_lb_listener" "frontend_listener" {
     target_group_arn = aws_lb_target_group.frontend_tg.arn
   }
 }
+
 resource "aws_lb_listener" "backend_listener" {
   load_balancer_arn = aws_lb.backend_alb.arn
-  port              = "5000"
+  port              = "80"
   protocol          = "HTTP"
 
   default_action {
@@ -230,3 +244,4 @@ resource "aws_lb_listener" "backend_listener" {
     target_group_arn = aws_lb_target_group.backend_tg.arn
   }
 }
+

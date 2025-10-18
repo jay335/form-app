@@ -18,9 +18,9 @@ def submit_form():
     print(f"Received submission: Name={name}, Email={email}")
     return jsonify({"message": f"Form submitted successfully for {name}!"}), 200
 
-@app.route('/health')
+@app.route('/')
 def health():
-    return jsonify({"status": "ok"}), 200
+     return "OK", 200
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)

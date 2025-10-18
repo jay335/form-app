@@ -11,3 +11,13 @@ variable "ecr_registry_alias" {
   type        = string
 }
 
+variable "frontend_tag" {
+  description = "Tag for the frontend Docker image"
+  type        = string
+}
+
+variable "backend_tag" {
+  description = "Tag for the backend Docker image"
+  type        = string
+}
+

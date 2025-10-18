@@ -4,7 +4,7 @@ document.getElementById('contactForm').addEventListener('submit', async (e) => {
     const email = document.getElementById('email').value;
 
     try {
-        const response = await fetch('http://form-app-backend-alb-858802151.us-east-1.elb.amazonaws.com/api/submit', {
+        const response = await fetch('http://form-app-backend-alb-1545345821.us-east-1.elb.amazonaws.com/api/submit', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
